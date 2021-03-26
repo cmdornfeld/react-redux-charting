@@ -16,3 +16,5 @@ function* getChartSaga(){
 function* getChartInfo(){
     yield takeLatest('GET_CHART_INFO', getChartSaga);
 }
+
+export default getChartInfo;
