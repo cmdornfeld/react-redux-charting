@@ -13,15 +13,11 @@ class Chart extends Component {
     render(){
 
         const data = {
-            categories: ['Jan', 'Feb', 'Mar'],
+            categories: ['Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'],
             series: [
                 {
-                    name: 'MMM',
+                    name: this.props.info['Meta Data'],
                     data: [180, 184, 190],
-                },
-                {
-                    name: 'EPD',
-                    data: [20, 21, 22]
                 }
             ]
         }
@@ -46,9 +42,16 @@ class Chart extends Component {
           };
 
         return (
+            <>
+            {JSON.stringify(this.props.info['Meta Data'])};
             <AreaChart data={data} options={options} style={containerStyle} />
+            </>
         );
     }
 }
 
-export default connect()(Chart);
+const putReduxStateOnProps = (reduxStore) => ({
+    info: reduxStore.chartReducer
+})
+
+export default connect(putReduxStateOnProps)(Chart);
