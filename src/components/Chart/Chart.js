@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { AreaChart, BarChart, LineChart } from '@toast-ui/react-chart';
+import { AreaChart, BarChart, ColumnChart, LineChart } from '@toast-ui/react-chart';
 import '@toast-ui/chart/dist/toastui-chart.min.css';
 
 
@@ -9,28 +9,37 @@ class Chart extends Component {
     state = {
         chartType: 'area'
     }
-    // componentDidMount(){
-    //     console.log('componentDidMount?');
-    //     this.props.dispatch({type: 'GET_CHART_INFO'});
-    // }
 
-    handleChartTypeChange = (chartType) => {
+    componentDidMount(){
+        console.log('componentDidMount?');
+        this.props.dispatch({type: 'GET_CHART_INFO'});
+    }
+
+    handleChartTypeChange = (chartSelection) => {
         this.setState({
-            chartType: chartType
+            chartType: chartSelection
         });
     }
 
     render(){
 
-        const tickerSymbol = this.props.info['Meta Data'] ? this.props.info['Meta Data']['2. Symbol']
-            : null;
+        if (!this.props.info || !this.props.info['Meta Data'] || !this.props.info['Monthly Time Series']){
+            return null;
+        }
+
+        const tickerSymbol = this.props.info['Meta Data']['2. Symbol'];
+        
+        const dates = Object.keys(this.props.info['Monthly Time Series']).slice(0, 10).reverse();
+
+        const tickerValues = dates.map(date => Number(this.props.info['Monthly Time Series'][date]['4. close']));
+
 
         const data = {
-            categories: ['Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'],
+            categories: dates,
             series: [
                 {
                     name: tickerSymbol,
-                    data: [164,168,166,174,172,176,176,180,184,190]
+                    data: tickerValues
                 }
             ]
         }
@@ -72,6 +81,8 @@ class Chart extends Component {
                     return <AreaChart data={data} options={options} style={containerStyle}/>
                 case 'bar':
                     return <BarChart data={data} options={options} style={containerStyle}/>
+                case 'column':
+                    return <ColumnChart data={data} options={options} style={containerStyle} />
                 case 'line':
                     return <LineChart data={data} options={options} style={containerStyle}/>
                 default:
@@ -81,11 +92,12 @@ class Chart extends Component {
 
         return (
             <>
-            {JSON.stringify(this.props.info)};
-            {chart()}
-            <button onClick={()=> this.handleChartTypeChange('area')}>Area</button>
-            <button onClick={()=> this.handleChartTypeChange('bar')}>Bar</button>
-            <button onClick={()=> this.handleChartTypeChange('line')}>Line</button>
+                {chart()}
+                <h3>Click on the chart type you wish to display</h3>
+                <button onClick={()=> this.handleChartTypeChange('area')}>Area</button>
+                <button onClick={()=> this.handleChartTypeChange('bar')}>Bar</button>
+                <button onClick={()=> this.handleChartTypeChange('column')}>Column</button>
+                <button onClick={()=> this.handleChartTypeChange('line')}>Line</button>
             </>
         );
     }
