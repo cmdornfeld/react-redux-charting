@@ -1,4 +1,4 @@
-const getChartInfo = ( state=[], action ) => {
+const getChartInfo = ( state={}, action ) => {
     switch( action.type ) {
         case 'SET_CHART_INFO':
             return action.payload;
