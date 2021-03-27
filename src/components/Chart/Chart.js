@@ -35,7 +35,19 @@ class Chart extends Component {
             ]
         }
 
-        const options = {
+        const options = this.state.chartType === 'bar' ? {
+            chart: { 
+                width: '60%',
+                height: 600,
+                title: 'Monthly Stock Prices' 
+            },
+            yAxis: {
+                title: 'Month'
+            },
+            xAxis: {
+                title: 'Price'
+            }
+        } : {
             chart: { 
                 width: '60%',
                 height: 600,
