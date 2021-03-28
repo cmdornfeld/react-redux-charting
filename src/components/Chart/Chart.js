@@ -10,11 +10,12 @@ class Chart extends Component {
         chartType: 'area'
     }
 
+    // dispatch action on page load to get the initial info for chart
     componentDidMount(){
-        console.log('componentDidMount?');
         this.props.dispatch({type: 'GET_CHART_INFO'});
     }
 
+    // function to update local state with the type of chart being viewed
     handleChartTypeChange = (chartSelection) => {
         this.setState({
             chartType: chartSelection
@@ -23,17 +24,21 @@ class Chart extends Component {
 
     render(){
 
+        // null check to ensure reducer info is loaded prior to assigning to variables
         if (!this.props.info || !this.props.info['Meta Data'] || !this.props.info['Monthly Time Series']){
             return null;
         }
 
         const tickerSymbol = this.props.info['Meta Data']['2. Symbol'];
         
-        const dates = Object.keys(this.props.info['Monthly Time Series']).slice(0, 10).reverse();
+        // limit the data points to 12 most current months and reversing the order - oldest to newest 
+        const dates = Object.keys(this.props.info['Monthly Time Series']).slice(0, 12).reverse();
 
+        // convert string response from API to number for each data point being charted
         const tickerValues = dates.map(date => Number(this.props.info['Monthly Time Series'][date]['4. close']));
 
 
+        // start of chart info
         const data = {
             categories: dates,
             series: [
@@ -48,7 +53,6 @@ class Chart extends Component {
             chart: { 
                 width: '60%',
                 height: 600,
-                title: 'Monthly Stock Prices' 
             },
             yAxis: {
                 title: 'Month'
@@ -60,7 +64,6 @@ class Chart extends Component {
             chart: { 
                 width: '60%',
                 height: 600,
-                title: 'Monthly Stock Prices' 
             },
             yAxis: {
                 title: 'Price'
@@ -74,7 +77,9 @@ class Chart extends Component {
             width: '90%',
             height: '90%',
         };
+        // end of chart info
 
+        // function for handling switching which chart type to display
         const chart = () => {
             switch(this.state.chartType){
                 case 'area':
